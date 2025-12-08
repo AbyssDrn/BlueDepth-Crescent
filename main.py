@@ -16,19 +16,17 @@ import torch
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-
 def print_banner():
     """Print BlueDepth-Crescent banner"""
     banner = """
 
-                 BlueDepth-Crescent v1.0.0                    
-         Underwater Vision Intelligence System                
-                                                              
-  AI-Powered Image Enhancement & Object Classification        
+                 BlueDepth-Crescent v1.0.0
+         Underwater Vision Intelligence System
+
+  AI-Powered Image Enhancement & Object Classification
 
     """
     print(banner)
-
 
 def check_dependencies():
     """Check if required dependencies are installed"""
@@ -40,11 +38,10 @@ def check_dependencies():
         import numpy
         return True
     except ImportError as e:
-        print(f" Missing dependency: {e}")
+        print(f"[ERROR] Missing dependency: {e}")
         print("\nInstall dependencies:")
         print("  pip install -r requirements.txt")
         return False
-
 
 def find_best_checkpoint():
     """Find the best available checkpoint automatically"""
@@ -55,47 +52,45 @@ def find_best_checkpoint():
     
     # Priority order for finding checkpoints
     patterns = [
-        "unet_standard_best.pth",   # Best standard model
-        "unet_attention_best.pth",  # Best attention model
-        "unet_light_best.pth",      # Best lightweight model
-        "*_best.pth",               # Any best checkpoint
-        "*_final.pth",              # Final checkpoint
-        "*_epoch_*.pth"             # Any epoch checkpoint
+        "unet_standard_best.pth",
+        "unet_attention_best.pth",
+        "unet_light_best.pth",
+        "*_best.pth",
+        "*_final.pth",
+        "*_epoch_*.pth"
     ]
     
     for pattern in patterns:
         matches = sorted(checkpoint_dir.glob(pattern))
         if matches:
-            return str(matches[-1])  # Return the latest match
+            return str(matches[-1])
     
     return None
-
 
 def list_checkpoints(args):
     """List all available checkpoints with details"""
     checkpoint_dir = Path("checkpoints")
     
     if not checkpoint_dir.exists():
-        print(" Checkpoint directory not found!")
-        print("\n Create checkpoints by training a model:")
+        print("[ERROR] Checkpoint directory not found!")
+        print("\n[TIP] Create checkpoints by training a model:")
         print("   python main.py train --model standard --epochs 100")
         return
     
     checkpoints = sorted(checkpoint_dir.glob("*.pth"))
     
     if not checkpoints:
-        print(" No checkpoints found!")
-        print("\n Train a model first:")
+        print("[ERROR] No checkpoints found!")
+        print("\n[TIP] Train a model first:")
         print("   python main.py train --model standard")
         return
     
-    print("\n Available Checkpoints:")
+    print("\n[INFO] Available Checkpoints:")
     print("=" * 80)
     
     for i, ckpt in enumerate(checkpoints, 1):
         size_mb = ckpt.stat().st_size / (1024 * 1024)
         
-        # Try to load checkpoint info
         try:
             checkpoint = torch.load(ckpt, map_location='cpu')
             epoch = checkpoint.get('epoch', 'N/A')
@@ -116,84 +111,104 @@ def list_checkpoints(args):
     
     best = find_best_checkpoint()
     if best:
-        print(f" Recommended (auto-detected): {Path(best).name}")
-
+        print(f"[RECOMMENDED] Auto-detected: {Path(best).name}")
 
 def train_model(args):
     """Train enhancement model"""
     from training.train_unet import UNetTrainer
-    from models import UNetLight, UNetStandard, UNetAttention
-    from data import UnderwaterDataset
-    from torch.utils.data import DataLoader
     
-    print(f"\n Starting Training: {args.model.upper()}")
-    print("=" * 60)
-    
-    # Select model
-    model_map = {
-        'light': UNetLight,
-        'standard': UNetStandard,
-        'attention': UNetAttention
-    }
-    
-    if args.model not in model_map:
-        print(f" Invalid model: {args.model}")
-        print(f"   Choose from: {list(model_map.keys())}")
-        sys.exit(1)
-    
-    model = model_map[args.model]()
+    print(f"\n[TRAINING] Starting Training: {args.model.upper()}")
+    print("=" * 70)
     
     # Check data directory
-    train_dir = Path(args.data_dir) / 'train'
-    val_dir = Path(args.data_dir) / 'val'
+    data_base = Path(args.data_dir)
+    train_hazy = data_base / 'train' / 'hazy'
+    train_clear = data_base / 'train' / 'clear'
+    val_hazy = data_base / 'val' / 'hazy'
+    val_clear = data_base / 'val' / 'clear'
     
-    if not train_dir.exists() or not val_dir.exists():
-        print(f" Data directory not found: {args.data_dir}")
-        print("\n Organize your data:")
-        print("   python scripts/organize_data.py")
+    # Alternative: test instead of val
+    if not val_hazy.exists():
+        val_hazy = data_base / 'test' / 'hazy'
+        val_clear = data_base / 'test' / 'clear'
+    
+    # Check if directories exist
+    if not train_hazy.exists():
+        print(f"[ERROR] Data directories not found!")
+        print(f"\n[STRUCTURE] Expected structure:")
+        print(f"  {data_base}/")
+        print(f"    train/")
+        print(f"      hazy/     (training hazy images)")
+        print(f"      clear/    (training clear/ground truth images)")
+        print(f"    val/ or test/")
+        print(f"      hazy/     (validation hazy images)")
+        print(f"      clear/    (validation clear images)")
+        print(f"\n[ACTION] Organize your data first:")
+        print(f"  python organize_data.py")
         sys.exit(1)
     
-    # Create datasets
-    print(f"\n Loading dataset from: {args.data_dir}")
-    train_dataset = UnderwaterDataset(str(train_dir), augment=True)
-    val_dataset = UnderwaterDataset(str(val_dir), augment=False)
+    # Check for clear images
+    has_clear_train = train_clear.exists() and len(list(train_clear.glob('*'))) > 0
+    has_clear_val = val_clear.exists() and len(list(val_clear.glob('*'))) > 0
     
-    train_loader = DataLoader(
-        train_dataset,
-        batch_size=args.batch_size,
-        shuffle=True,
-        num_workers=4,
-        pin_memory=True
-    )
+    if has_clear_train and has_clear_val:
+        print(f"[INFO] Running in SUPERVISED mode (paired hazy/clear)")
+    else:
+        print(f"[WARNING] No clear images found! Training requires paired data.")
+        sys.exit(1)
     
-    val_loader = DataLoader(
-        val_dataset,
-        batch_size=args.batch_size,
-        shuffle=False,
-        num_workers=4
-    )
+    # Initialize trainer - NO MODEL OBJECT, just pass model_type string
+    print(f"\n[INITIALIZING] Creating trainer...")
     
-    print(f"   Training samples: {len(train_dataset)}")
-    print(f"   Validation samples: {len(val_dataset)}")
+    try:
+        trainer = UNetTrainer(
+            model_type=args.model,           # STRING: 'standard', 'light', or 'attention'
+            data_dir=str(data_base),         # Base data directory
+            img_size=256,                    # Image size
+            batch_size=args.batch_size,      # Batch size
+            num_epochs=args.epochs,          # Number of epochs
+            learning_rate=args.lr,           # Learning rate
+            checkpoint_dir='checkpoints',    # Checkpoint directory
+            log_dir='logs',                  # Log directory
+            use_amp=True,                    # Mixed precision
+            use_perceptual_loss=False        # Perceptual loss
+        )
+    except Exception as e:
+        print(f"\n[ERROR] Failed to initialize trainer: {e}")
+        print(f"\n[DEBUG] Arguments:")
+        print(f"  model_type: {args.model}")
+        print(f"  data_dir: {data_base}")
+        print(f"  batch_size: {args.batch_size}")
+        print(f"  epochs: {args.epochs}")
+        print(f"  learning_rate: {args.lr}")
+        raise
     
-    # Initialize trainer
-    trainer = UNetTrainer(
-        model=model,
-        train_loader=train_loader,
-        val_loader=val_loader,
-        num_epochs=args.epochs,
-        learning_rate=args.lr,
-        device='cuda' if torch.cuda.is_available() else 'cpu'
-    )
+    # Check if resuming from checkpoint
+    if hasattr(args, 'resume') and args.resume:
+        checkpoint_path = Path(args.resume)
+        if checkpoint_path.exists():
+            print(f"[INFO] Resuming from checkpoint: {checkpoint_path}")
+            trainer.load_checkpoint(str(checkpoint_path))
+        else:
+            print(f"[WARNING] Checkpoint not found: {checkpoint_path}")
     
     # Train
-    print(f"\n⏳ Training for {args.epochs} epochs...")
-    history = trainer.train()
+    print(f"\n[TRAINING] Training for {args.epochs} epochs...")
+    print(f"[INFO] Model: {args.model.upper()}")
+    print(f"[INFO] Batch size: {args.batch_size}")
+    print(f"[INFO] Learning rate: {args.lr}")
+    print(f"[INFO] Device: {'CUDA' if torch.cuda.is_available() else 'CPU'}")
+    print(f"[INFO] Mixed precision: {'Enabled' if torch.cuda.is_available() else 'Disabled'}")
+    print("=" * 70)
     
-    print("\n Training Complete!")
-    print(f"   Best PSNR: {history.get('best_psnr', 0):.2f} dB")
-    print(f"   Best Epoch: {history.get('best_epoch', 0)}")
-    print(f"   Checkpoint: checkpoints/{args.model}_best.pth")
+    trainer.train()
+    
+    print("\n[SUCCESS] Training Complete!")
+    print(f"  Best checkpoint: checkpoints/{args.model}_best.pth")
+    print(f"  TensorBoard logs: logs/{args.model}/")
+    print(f"\n[NEXT STEPS]")
+    print(f"  View training logs: tensorboard --logdir logs")
+    print(f"  Test model: python main.py enhance --input data/test/hazy/image_001.jpg --output enhanced.jpg")
 
 
 def enhance_image(args):
@@ -201,123 +216,109 @@ def enhance_image(args):
     from inference import ImageEnhancer
     from PIL import Image
     
-    print(f"\n  Enhancing Image: {args.input}")
-    print("=" * 60)
+    print(f"\n[ENHANCE] Enhancing Image: {args.input}")
+    print("=" * 70)
     
-    # Check input file
     if not Path(args.input).exists():
-        print(f" Input file not found: {args.input}")
+        print(f"[ERROR] Input file not found: {args.input}")
         sys.exit(1)
     
-    # Auto-detect checkpoint if needed
     model_path = args.model_path
     if not Path(model_path).exists():
-        print(f"  Checkpoint '{model_path}' not found. Searching...")
+        print(f"[INFO] Checkpoint '{model_path}' not found. Searching...")
         model_path = find_best_checkpoint()
         
         if model_path is None:
-            print("\n No checkpoint files found!")
-            print("\n Options:")
-            print("   1. Train a model: python main.py train")
-            print("   2. Download pretrained: see checkpoints/DOWNLOAD_MODELS.md")
+            print("\n[ERROR] No checkpoint files found!")
+            print("\n[OPTIONS]:")
+            print("  1. Train a model: python main.py train")
+            print("  2. Download pretrained: see checkpoints/README.md")
             sys.exit(1)
         
-        print(f" Using checkpoint: {model_path}")
+        print(f"[INFO] Using checkpoint: {model_path}")
     
-    # Create enhancer
     enhancer = ImageEnhancer(model_path, device=args.device)
     
-    # Enhance
-    print(f"\n⏳ Processing...")
+    print(f"\n[PROCESSING] Enhancing...")
     image = Image.open(args.input)
     enhanced, metrics = enhancer.enhance(image, return_metrics=True)
     
-    # Save
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     Image.fromarray(enhanced).save(output_path)
     
-    # Print results
-    print(f"\n Enhancement Complete!")
-    print(f"   Inference time: {metrics['time']:.3f}s")
-    print(f"   FPS: {metrics['fps']:.1f}")
-    print(f"   Output: {output_path}")
-
+    print(f"\n[SUCCESS] Enhancement Complete!")
+    print(f"  Inference time: {metrics['time']:.3f}s")
+    print(f"  FPS: {metrics['fps']:.1f}")
+    print(f"  Output: {output_path}")
 
 def enhance_batch(args):
     """Enhance batch of images"""
     from inference import BatchProcessor
     
-    print(f"\n Batch Enhancement")
-    print("=" * 60)
+    print(f"\n[BATCH] Batch Enhancement")
+    print("=" * 70)
     
-    # Check directories
     input_dir = Path(args.input_dir)
     if not input_dir.exists():
-        print(f" Input directory not found: {input_dir}")
+        print(f"[ERROR] Input directory not found: {input_dir}")
         sys.exit(1)
     
-    # Auto-detect checkpoint
     model_path = args.model_path
     if not Path(model_path).exists():
-        print(f"  Checkpoint '{model_path}' not found. Searching...")
+        print(f"[INFO] Checkpoint '{model_path}' not found. Searching...")
         model_path = find_best_checkpoint()
         
         if model_path is None:
-            print("\n No checkpoint files found!")
+            print("\n[ERROR] No checkpoint files found!")
             sys.exit(1)
         
-        print(f" Using checkpoint: {model_path}")
+        print(f"[INFO] Using checkpoint: {model_path}")
     
-    # Process batch
     processor = BatchProcessor(model_path, device=args.device)
     
-    print(f"\n⏳ Processing images from: {input_dir}")
+    print(f"\n[PROCESSING] Processing images from: {input_dir}")
     stats = processor.process_directory(
         str(input_dir),
         args.output_dir,
         batch_size=args.batch_size
     )
     
-    print(f"\n Batch Enhancement Complete!")
-    print(f"   Processed: {stats['total_images']} images")
-    print(f"   Total time: {stats['total_time']:.2f}s")
-    print(f"   Average time: {stats['avg_time']:.3f}s per image")
-    print(f"   Output: {args.output_dir}")
-
+    print(f"\n[SUCCESS] Batch Enhancement Complete!")
+    print(f"  Processed: {stats['total_images']} images")
+    print(f"  Total time: {stats['total_time']:.2f}s")
+    print(f"  Average time: {stats['avg_time']:.3f}s per image")
+    print(f"  Output: {args.output_dir}")
 
 def process_video(args):
     """Process video file"""
     from inference import VideoProcessor
     
-    print(f"\n Video Processing: {args.input}")
-    print("=" * 60)
+    print(f"\n[VIDEO] Video Processing: {args.input}")
+    print("=" * 70)
     
-    # Check input
     if not Path(args.input).exists():
-        print(f" Video file not found: {args.input}")
+        print(f"[ERROR] Video file not found: {args.input}")
         sys.exit(1)
     
-    # Auto-detect checkpoint
     model_path = args.model_path
     if not Path(model_path).exists():
-        print(f"  Checkpoint '{model_path}' not found. Searching...")
+        print(f"[INFO] Checkpoint '{model_path}' not found. Searching...")
         model_path = find_best_checkpoint()
         
         if model_path is None:
-            print("\n No checkpoint files found!")
+            print("\n[ERROR] No checkpoint files found!")
             sys.exit(1)
         
-        print(f" Using checkpoint: {model_path}")
+        print(f"[INFO] Using checkpoint: {model_path}")
     
-    # Process video
     processor = VideoProcessor(model_path, device=args.device)
     
-    print(f"\n⏳ Processing video...")
+    print(f"\n[PROCESSING] Processing video...")
     
     def progress_callback(frame, total):
         percent = (frame / total) * 100
-        print(f"   Progress: {frame}/{total} frames ({percent:.1f}%)", end='\r')
+        print(f"  Progress: {frame}/{total} frames ({percent:.1f}%)", end='\r')
     
     stats = processor.process_video(
         args.input,
@@ -325,36 +326,33 @@ def process_video(args):
         progress_callback=progress_callback
     )
     
-    print(f"\n\n Video Processing Complete!")
-    print(f"   Total frames: {stats['total_frames']}")
-    print(f"   Processing time: {stats['total_time']:.2f}s")
-    print(f"   Average FPS: {stats['avg_fps']:.1f}")
-    print(f"   Output: {args.output}")
-
+    print(f"\n\n[SUCCESS] Video Processing Complete!")
+    print(f"  Total frames: {stats['total_frames']}")
+    print(f"  Processing time: {stats['total_time']:.2f}s")
+    print(f"  Average FPS: {stats['avg_fps']:.1f}")
+    print(f"  Output: {args.output}")
 
 def export_model(args):
     """Export model to ONNX"""
     from edge.export_onnx import export_to_onnx
     
-    print(f"\n Exporting Model to ONNX")
-    print("=" * 60)
+    print(f"\n[EXPORT] Exporting Model to ONNX")
+    print("=" * 70)
     
-    # Check checkpoint
     if not Path(args.model_path).exists():
-        print(f"  Model checkpoint not found: {args.model_path}")
+        print(f"[INFO] Model checkpoint not found: {args.model_path}")
         
         model_path = find_best_checkpoint()
         if model_path:
-            print(f" Found alternative: {model_path}")
+            print(f"[INFO] Found alternative: {model_path}")
             args.model_path = model_path
         else:
-            print(" No checkpoints found!")
+            print("[ERROR] No checkpoints found!")
             sys.exit(1)
     
-    # Export
-    print(f"\n⏳ Exporting...")
-    print(f"   Input: {args.model_path}")
-    print(f"   Output: {args.output}")
+    print(f"\n[PROCESSING] Exporting...")
+    print(f"  Input: {args.model_path}")
+    print(f"  Output: {args.output}")
     
     export_to_onnx(
         args.model_path,
@@ -363,31 +361,28 @@ def export_model(args):
         opset_version=args.opset
     )
     
-    print(f"\n Export Complete!")
-    print(f"   ONNX model: {args.output}")
-    print(f"   Input shape: {args.input_shape}")
-
+    print(f"\n[SUCCESS] Export Complete!")
+    print(f"  ONNX model: {args.output}")
+    print(f"  Input shape: {args.input_shape}")
 
 def launch_dashboard(args):
     """Launch Gradio dashboard"""
     import subprocess
     
-    print(f"\n Launching BlueDepth-Crescent Dashboard")
-    print("=" * 60)
+    print(f"\n[DASHBOARD] Launching BlueDepth-Crescent Dashboard")
+    print("=" * 70)
     
-    # Get dashboard path
     dashboard_path = Path(__file__).parent / "ui" / "app.py"
     
     if not dashboard_path.exists():
-        print(f" Dashboard file not found: {dashboard_path}")
-        print("\n Make sure ui/app.py exists")
+        print(f"[ERROR] Dashboard file not found: {dashboard_path}")
+        print("\n[TIP] Make sure ui/app.py exists")
         sys.exit(1)
     
-    print(f"\n Dashboard will open at: http://localhost:{args.port}")
-    print(f"⏹  Press Ctrl+C to stop\n")
+    print(f"\n[INFO] Dashboard will open at: http://localhost:{args.port}")
+    print(f"[INFO] Press Ctrl+C to stop\n")
     
     try:
-        # Launch Gradio dashboard
         subprocess.run([
             sys.executable,
             str(dashboard_path),
@@ -395,21 +390,19 @@ def launch_dashboard(args):
             "--share" if args.share else "--no-share"
         ])
     except KeyboardInterrupt:
-        print("\n\n Dashboard stopped.")
+        print("\n\n[INFO] Dashboard stopped.")
     except Exception as e:
-        print(f"\n Error launching dashboard: {e}")
-        print(f"\n Try running directly:")
-        print(f"   python {dashboard_path}")
-
+        print(f"\n[ERROR] Error launching dashboard: {e}")
+        print(f"\n[TIP] Try running directly:")
+        print(f"  python {dashboard_path}")
 
 def run_tests(args):
     """Run test suite"""
     import pytest
     
-    print(f"\n Running Test Suite")
-    print("=" * 60)
+    print(f"\n[TESTING] Running Test Suite")
+    print("=" * 70)
     
-    # Determine which tests to run
     if args.test_type == 'all':
         test_path = 'tests/'
     elif args.test_type == 'models':
@@ -423,9 +416,8 @@ def run_tests(args):
     else:
         test_path = 'tests/'
     
-    print(f"\n⏳ Running tests: {test_path}")
+    print(f"\n[INFO] Running tests: {test_path}")
     
-    # Run pytest
     exit_code = pytest.main([
         test_path,
         '-v',
@@ -434,63 +426,56 @@ def run_tests(args):
     ])
     
     if exit_code == 0:
-        print(f"\n All tests passed!")
+        print(f"\n[SUCCESS] All tests passed!")
     else:
-        print(f"\n Some tests failed. Exit code: {exit_code}")
+        print(f"\n[ERROR] Some tests failed. Exit code: {exit_code}")
         sys.exit(exit_code)
-
 
 def show_info(args):
     """Show system and model information"""
-    print(f"\n System Information")
-    print("=" * 60)
+    print(f"\n[INFO] System Information")
+    print("=" * 70)
     
-    # Python info
-    print(f"\n Python:")
-    print(f"   Version: {sys.version.split()[0]}")
-    print(f"   Executable: {sys.executable}")
+    print(f"\n[PYTHON]")
+    print(f"  Version: {sys.version.split()[0]}")
+    print(f"  Executable: {sys.executable}")
     
-    # PyTorch info
     try:
         import torch
-        print(f"\n PyTorch:")
-        print(f"   Version: {torch.__version__}")
-        print(f"   CUDA available: {torch.cuda.is_available()}")
+        print(f"\n[PYTORCH]")
+        print(f"  Version: {torch.__version__}")
+        print(f"  CUDA available: {torch.cuda.is_available()}")
         if torch.cuda.is_available():
-            print(f"   CUDA version: {torch.version.cuda}")
-            print(f"   GPU: {torch.cuda.get_device_name(0)}")
-            print(f"   GPU memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
+            print(f"  CUDA version: {torch.version.cuda}")
+            print(f"  GPU: {torch.cuda.get_device_name(0)}")
+            print(f"  GPU memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
     except ImportError:
-        print(f"\n  PyTorch not installed")
+        print(f"\n[WARNING] PyTorch not installed")
     
-    # Project structure
-    print(f"\n Project Structure:")
+    print(f"\n[PROJECT STRUCTURE]")
     dirs = ['models', 'inference', 'training', 'data', 'utils', 'ui', 'tests', 'checkpoints', 'logs']
     for dir_name in dirs:
-        exists = "" if Path(dir_name).exists() else ""
-        print(f"   {exists} {dir_name}/")
+        exists = "[OK]" if Path(dir_name).exists() else "[MISSING]"
+        print(f"  {exists} {dir_name}/")
     
-    # Checkpoints
-    print(f"\n Checkpoints:")
+    print(f"\n[CHECKPOINTS]")
     ckpt_dir = Path('checkpoints')
     if ckpt_dir.exists():
         checkpoints = list(ckpt_dir.glob('*.pth'))
         if checkpoints:
-            for ckpt in checkpoints[:5]:  # Show first 5
+            for ckpt in checkpoints[:5]:
                 size = ckpt.stat().st_size / (1024 * 1024)
-                print(f"    {ckpt.name} ({size:.1f} MB)")
+                print(f"  {ckpt.name} ({size:.1f} MB)")
             if len(checkpoints) > 5:
-                print(f"   ... and {len(checkpoints) - 5} more")
+                print(f"  ... and {len(checkpoints) - 5} more")
         else:
-            print(f"   No checkpoints found")
+            print(f"  No checkpoints found")
     else:
-        print(f"   Checkpoints directory not found")
-
+        print(f"  Checkpoints directory not found")
 
 def main():
     """Main entry point"""
     
-    # Check dependencies first
     if not check_dependencies():
         sys.exit(1)
     
@@ -511,19 +496,14 @@ Examples:
   # Enhance image (auto-detects checkpoint)
   python main.py enhance --input image.jpg --output enhanced.jpg
   
-  # Enhance with specific checkpoint
-  python main.py enhance --input image.jpg --output enhanced.jpg \\
-      --model-path checkpoints/unet_standard_best.pth
-  
   # Batch enhancement
-  python main.py batch --input-dir data/raw --output-dir data/enhanced
+  python main.py batch --input-dir data/test/hazy --output-dir data/enhanced
   
   # Process video
-  python main.py video --input video.mp4 --output enhanced.mp4
+  python main.py video --input data/videos/underwater.mp4 --output enhanced.mp4
   
   # Export to ONNX
-  python main.py export --model-path checkpoints/unet_standard_best.pth \\
-      --output model.onnx
+  python main.py export --model-path checkpoints/unet_standard_best.pth --output model.onnx
   
   # Launch dashboard
   python main.py dashboard --port 7860
@@ -554,7 +534,10 @@ For more help: python main.py <command> --help
     train_parser.add_argument('--batch-size', type=int, default=16, help='Batch size')
     train_parser.add_argument('--epochs', type=int, default=100, help='Number of epochs')
     train_parser.add_argument('--lr', type=float, default=1e-4, help='Learning rate')
+    train_parser.add_argument('--resume', type=str, default=None, 
+                            help='Resume from checkpoint path')  # ADD THIS
     train_parser.set_defaults(func=train_model)
+
     
     # Enhance command
     enhance_parser = subparsers.add_parser('enhance', help='Enhance single image')
@@ -610,7 +593,6 @@ For more help: python main.py <command> --help
                             help='Test type to run')
     test_parser.set_defaults(func=run_tests)
     
-    # Parse and execute
     args = parser.parse_args()
     
     if args.command is None:
@@ -618,13 +600,10 @@ For more help: python main.py <command> --help
         parser.print_help()
         sys.exit(1)
     
-    # Print banner for main commands
     if args.command not in ['info', 'list']:
         print_banner()
     
-    # Execute command
     args.func(args)
-
 
 if __name__ == "__main__":
     main()

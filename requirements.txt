@@ -1,5 +1,5 @@
 # ============================================================================
-# BlueDepth-Crescent Requirements
+# BlueDepth-Crescent Requirements - FINAL WORKING VERSION
 # ============================================================================
 # Project: Underwater Vision Intelligence System
 # Version: 1.0.0
@@ -8,31 +8,15 @@
 # Target: RTX 4050 (6GB VRAM)
 # ============================================================================
 
-
-# ============================================================================
 # INSTALLATION INSTRUCTIONS
-# ============================================================================
-# STEP 1: Install PyTorch with CUDA 11.8 support
+# STEP 1: Install PyTorch with CUDA 11.8
 #   pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu118
 #
-# STEP 2: Install remaining dependencies
+# STEP 2: Install dependencies
 #   pip install -r requirements.txt
-#
-# STEP 3: Verify installation
-#   python -c "import torch; print(f'PyTorch: {torch.__version__}'); print(f'CUDA: {torch.cuda.is_available()}')"
-# ============================================================================
-
 
 # ============================================================================
-# CORE DEEP LEARNING (Install separately first - see STEP 1 above)
-# ============================================================================
-# torch==2.1.0+cu118
-# torchvision==0.16.0+cu118
-# torchaudio==2.1.0+cu118
-
-
-# ============================================================================
-# IMAGE PROCESSING (Critical for underwater enhancement)
+# IMAGE PROCESSING
 # ============================================================================
 opencv-python==4.8.1.78
 opencv-contrib-python==4.8.1.78
@@ -41,182 +25,101 @@ imageio==2.31.5
 imageio-ffmpeg==0.4.9
 scikit-image==0.22.0
 
-
 # ============================================================================
-# DATA SCIENCE & NUMERICAL COMPUTING
+# DATA SCIENCE
 # ============================================================================
 numpy==1.24.3
 pandas==2.1.3
 scipy==1.11.4
 
-
 # ============================================================================
 # MACHINE LEARNING
 # ============================================================================
 scikit-learn==1.3.2
-albumentations==1.3.1          # Advanced image augmentation
-
+albumentations==1.3.1
 
 # ============================================================================
-# DEEP LEARNING UTILITIES
+# DEEP LEARNING UTILITIES (Fixed version conflicts)
 # ============================================================================
-timm==0.9.12                   # PyTorch Image Models (pretrained backbones)
-segmentation-models-pytorch==0.3.3  # Segmentation architectures
-einops==0.7.0                  # Tensor operations
-
+timm==0.9.2
+segmentation-models-pytorch==0.3.3
+einops==0.7.0
 
 # ============================================================================
 # METRICS & VISUALIZATION
 # ============================================================================
 matplotlib==3.8.2
 seaborn==0.13.0
-plotly==5.18.0                 # Interactive charts
-tensorboard==2.15.1            # Training visualization
-tqdm==4.66.1                   # Progress bars
-
+plotly==5.18.0
+tensorboard==2.15.1
+tqdm==4.66.1
 
 # ============================================================================
 # USER INTERFACE
 # ============================================================================
-gradio==4.8.0                  # Primary UI (used in ui/app.py)
-# streamlit==1.29.0            # Optional alternative UI (not currently used)
-
+gradio==4.8.0
 
 # ============================================================================
-# MODEL EXPORT & OPTIMIZATION
+# MODEL EXPORT
 # ============================================================================
-onnx==1.15.0                   # ONNX export
-onnxruntime==1.16.3            # CPU inference
-onnxruntime-gpu==1.16.3        # GPU inference
-
-
-# ============================================================================
-# CONFIGURATION MANAGEMENT
-# ============================================================================
-PyYAML==6.0.1                  # YAML config files
-python-dotenv==1.0.0           # Environment variables
-omegaconf==2.3.0               # Hierarchical configs
-
+onnx==1.15.0
+onnxruntime==1.16.3
+onnxruntime-gpu==1.16.3
 
 # ============================================================================
-# LOGGING & MONITORING
+# CONFIGURATION
 # ============================================================================
-colorama==0.4.6                # Colored terminal output
-rich==13.7.0                   # Rich text formatting
-loguru==0.7.2                  # Advanced logging
+PyYAML==6.0.1
+python-dotenv==1.0.0
+omegaconf==2.3.0
 
+# ============================================================================
+# LOGGING
+# ============================================================================
+colorama==0.4.6
+rich==13.7.0
+loguru==0.7.2
 
 # ============================================================================
 # SYSTEM MONITORING
 # ============================================================================
-psutil==5.9.6                  # System utilization
-py-cpuinfo==9.0.0              # CPU information
-pynvml==11.5.0                 # NVIDIA GPU monitoring
-gputil==1.4.0                  # GPU utilities
-nvidia-ml-py3==7.352.0         # NVIDIA ML library
-
+psutil==5.9.6
+py-cpuinfo==9.0.0
+pynvml==11.5.0
 
 # ============================================================================
 # TESTING
 # ============================================================================
-pytest==7.4.3                  # Test framework
-pytest-cov==4.1.0              # Coverage reporting
-pytest-mock==3.12.0            # Mocking utilities
-
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-mock==3.12.0
 
 # ============================================================================
 # VIDEO PROCESSING
 # ============================================================================
-ffmpeg-python==0.2.0           # FFmpeg wrapper
-
+ffmpeg-python==0.2.0
 
 # ============================================================================
 # WEB & API
 # ============================================================================
-requests==2.31.0               # HTTP library
-urllib3==2.1.0                 # HTTP client
-
+requests==2.31.0
+urllib3==2.1.0
 
 # ============================================================================
 # DATA HANDLING
 # ============================================================================
-h5py==3.10.0                   # HDF5 file format
-
-
-# ============================================================================
-# UNDERWATER-SPECIFIC ENHANCEMENTS
-# ============================================================================
-colour-science==0.4.3          # Color science computations
-scikit-fuzzy==0.4.2            # Fuzzy logic for enhancement
-
+h5py==3.10.0
 
 # ============================================================================
-# OBJECT DETECTION (Optional - for classification module)
+# UNDERWATER-SPECIFIC
 # ============================================================================
-# ultralytics==8.0.221         # YOLOv8 (uncomment if using detection)
-# supervision==0.16.0          # Detection utilities
-
-
-# ============================================================================
-# GEOSPATIAL (Optional - for maritime operations)
-# ============================================================================
-# geopy==2.4.1                 # Geocoding
-# pyproj==3.6.1                # Coordinate transformations
-
+colour-science==0.4.3
+scikit-fuzzy==0.4.2
 
 # ============================================================================
-# RAW IMAGE SUPPORT (Optional - for professional cameras)
+# VERSION NOTES
 # ============================================================================
-# rawpy==0.19.0                # RAW image processing
-
-
-# ============================================================================
-# EDGE DEPLOYMENT (Jetson Nano - Install on device only)
-# ============================================================================
-# tensorrt                     # TensorRT optimization
-# pycuda                       # CUDA Python bindings
-# jetson-stats                 # Jetson monitoring
-# jtop                         # Jetson stats GUI
-
-
-# ============================================================================
-# DEVELOPMENT TOOLS (Optional)
-# ============================================================================
-# ipython==8.18.1              # Interactive Python
-# jupyter==1.0.0               # Jupyter notebooks
-# black==23.12.0               # Code formatter
-# flake8==6.1.0                # Linter
-# mypy==1.7.1                  # Type checker
-
-
-# ============================================================================
-# MINIMUM VERSION COMPATIBILITY
-# ============================================================================
-# Python >= 3.10.0, < 3.12
-# CUDA >= 11.8
-# cuDNN >= 8.6
-
-
-# ============================================================================
-# PACKAGE NOTES
-# ============================================================================
-# 
-# CRITICAL PACKAGES (DO NOT CHANGE VERSIONS):
-# - torch==2.1.0+cu118: Tested with RTX 4050, CUDA 11.8
-# - opencv-python==4.8.1.78: Stable for underwater processing
-# - albumentations==1.3.1: Required for data augmentation
-# - gradio==4.8.0: UI framework version
-#
-# MEMORY CONSIDERATIONS (RTX 4050 - 6GB VRAM):
-# - Batch size: 8-16 for UNetStandard
-# - Batch size: 16-32 for UNetLight
-# - Enable mixed precision (FP16) to reduce memory usage
-#
-# TROUBLESHOOTING:
-# - If torch installation fails: Use --no-cache-dir flag
-# - If CUDA not detected: Reinstall NVIDIA drivers
-# - If OOM errors: Reduce batch size or use UNetLight
-#
-# ============================================================================
-# END OF REQUIREMENTS
+# - timm==0.9.2 (NOT 0.9.12) - required by segmentation-models-pytorch
+# - segmentation-models-pytorch requires exact timm==0.9.2
+# - scikit-fuzzy may need --no-build-isolation if it fails
 # ============================================================================

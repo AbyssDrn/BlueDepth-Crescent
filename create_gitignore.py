@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+"""
+Generate comprehensive .gitignore for BlueDepth-Crescent
+Run this before committing to Git
+"""
+
+gitignore_content = """
 # Python
 __pycache__/
 *.py[cod]
@@ -110,3 +117,15 @@ htmlcov/
 # Compiled files
 *.pyc
 *.pyo
+"""
+
+with open('.gitignore', 'w') as f:
+    f.write(gitignore_content.strip())
+
+print("✓ Created .gitignore")
+print("\nThis will prevent uploading:")
+print("  - Virtual environment (venv/)")
+print("  - Model checkpoints (*.pth)")
+print("  - Training data (images, videos)")
+print("  - Results and logs")
+print("\n✓ Safe to commit to Git now!")

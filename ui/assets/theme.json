@@ -1,0 +1,20 @@
+{
+  "theme": {
+    "primary_hue": "blue",
+    "secondary_hue": "purple",
+    "neutral_hue": "slate",
+    "text_size": "md",
+    "spacing_size": "md",
+    "radius_size": "md",
+    "font": ["Inter", "sans-serif"],
+    "font_mono": ["Fira Code", "monospace"]
+  },
+  "colors": {
+    "primary": "#667eea",
+    "secondary": "#764ba2",
+    "success": "#28a745",
+    "warning": "#ffc107",
+    "danger": "#dc3545",
+    "info": "#17a2b8"
+  }
+}

@@ -669,99 +669,99 @@ processor.process_video('input.mp4', 'output.mp4')
 
 ```
 BlueDepth-Crescent/
-├── models/                  # Neural network architectures
-│   ├── __init__.py
-│   ├── base_model.py       # Abstract base class
-│   ├── unet_standard.py    # Standard U-Net (31M params)
-│   ├── unet_light.py       # Lightweight U-Net (8M params)
-│   ├── unet_attention.py   # Attention U-Net (42M params)
-│   └── classifier.py       # Classification head
-│
-├── training/               # Training infrastructure
-│   ├── __init__.py
-│   ├── train_unet.py      # Main training script
-│   ├── losses.py          # Loss functions (SSIM, MS-SSIM, Perceptual)
-│   ├── dataset.py         # PyTorch Dataset with augmentation
-│   └── device_manager.py  # GPU thermal monitoring
-│
-├── inference/              # Inference pipeline
-│   ├── __init__.py
-│   ├── enhancer.py        # Image enhancement
-│   ├── batch_processor.py # Parallel batch processing
-│   ├── video_processor.py # Video frame extraction
-│   ├── classifier.py      # Object classification
-│   ├── model_loader.py    # Model loading utilities
-│   └── inference_handler.py # API wrapper
-│
-├── utils/                  # Utility functions
-│   ├── __init__.py
-│   ├── config.py          # Configuration management
-│   ├── logger.py          # Structured logging
-│   ├── metrics.py         # PSNR, SSIM, MSE
-│   ├── visualization.py   # Plotting utilities
-│   ├── image_utils.py     # Image I/O
-│   └── video_utils.py     # Video utilities
-│
-├── ui/                     # User interface
-│   ├── app.py             # Gradio dashboard
-│   └── assets/            # UI resources
-│
-├── edge/                   # Edge deployment
-│   ├── export_onnx.py     # ONNX export
-│   ├── convert_trt.py     # TensorRT conversion
-│   ├── jetson_inference.py # Jetson inference
-│   └── optimize_model.py  # Quantization
-│
-├── configs/                # Configuration files
-│   ├── training_config.yaml
-│   ├── device_config.yaml
-│   └── model_configs/
-│
-├── tests/                  # Unit tests
-│   ├── test_models.py
-│   ├── test_inference.py
-│   ├── test_training.py
-│   ├── test_utils.py
-│   └── conftest.py
-│
-├── scripts/                # Automation scripts
-│   ├── organize_data.py
-│   ├── verify_installation.py
-│   ├── install.sh
-│   └── install.bat
-│
-├── docs/                   # Documentation
-│   ├── ARCHITECTURE.md
-│   ├── TRAINING_GUIDE.md
-│   ├── DEPLOYMENT_GUIDE.md
-│   └── API_REFERENCE.md
-│
-├── data/                   # Datasets (not in git)
-│   ├── train/
-│   ├── val/
-│   ├── test/
-│   └── README.md
-│
-├── checkpoints/            # Model checkpoints (not in git)
-│   ├── unet_standard_best.pth
-│   ├── unet_light_best.pth
-│   └── README.md
-│
-├── logs/                   # Training logs (not in git)
-│   └── README.md
-│
-├── results/                # Output results (not in git)
-│   ├── enhanced/
-│   ├── benchmarks/
-│   └── README.md
-│
-├── main.py                 # Command-line interface
-├── remove_emojis.py       # Repository cleaner
-├── requirements.txt       # Python dependencies
-├── .gitignore            # Git exclusions
-├── .gitattributes        # Git file handling
-├── LICENSE               # MIT License
-└── README.md             # This file
+ models/                  # Neural network architectures
+    __init__.py
+    base_model.py       # Abstract base class
+    unet_standard.py    # Standard U-Net (31M params)
+    unet_light.py       # Lightweight U-Net (8M params)
+    unet_attention.py   # Attention U-Net (42M params)
+    classifier.py       # Classification head
+
+ training/               # Training infrastructure
+    __init__.py
+    train_unet.py      # Main training script
+    losses.py          # Loss functions (SSIM, MS-SSIM, Perceptual)
+    dataset.py         # PyTorch Dataset with augmentation
+    device_manager.py  # GPU thermal monitoring
+
+ inference/              # Inference pipeline
+    __init__.py
+    enhancer.py        # Image enhancement
+    batch_processor.py # Parallel batch processing
+    video_processor.py # Video frame extraction
+    classifier.py      # Object classification
+    model_loader.py    # Model loading utilities
+    inference_handler.py # API wrapper
+
+ utils/                  # Utility functions
+    __init__.py
+    config.py          # Configuration management
+    logger.py          # Structured logging
+    metrics.py         # PSNR, SSIM, MSE
+    visualization.py   # Plotting utilities
+    image_utils.py     # Image I/O
+    video_utils.py     # Video utilities
+
+ ui/                     # User interface
+    app.py             # Gradio dashboard
+    assets/            # UI resources
+
+ edge/                   # Edge deployment
+    export_onnx.py     # ONNX export
+    convert_trt.py     # TensorRT conversion
+    jetson_inference.py # Jetson inference
+    optimize_model.py  # Quantization
+
+ configs/                # Configuration files
+    training_config.yaml
+    device_config.yaml
+    model_configs/
+
+ tests/                  # Unit tests
+    test_models.py
+    test_inference.py
+    test_training.py
+    test_utils.py
+    conftest.py
+
+ scripts/                # Automation scripts
+    organize_data.py
+    verify_installation.py
+    install.sh
+    install.bat
+
+ docs/                   # Documentation
+    ARCHITECTURE.md
+    TRAINING_GUIDE.md
+    DEPLOYMENT_GUIDE.md
+    API_REFERENCE.md
+
+ data/                   # Datasets (not in git)
+    train/
+    val/
+    test/
+    README.md
+
+ checkpoints/            # Model checkpoints (not in git)
+    unet_standard_best.pth
+    unet_light_best.pth
+    README.md
+
+ logs/                   # Training logs (not in git)
+    README.md
+
+ results/                # Output results (not in git)
+    enhanced/
+    benchmarks/
+    README.md
+
+ main.py                 # Command-line interface
+ remove_emojis.py       # Repository cleaner
+ requirements.txt       # Python dependencies
+ .gitignore            # Git exclusions
+ .gitattributes        # Git file handling
+ LICENSE               # MIT License
+ README.md             # This file
 ```
 
 ---
