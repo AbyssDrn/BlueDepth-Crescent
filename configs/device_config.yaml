@@ -1,0 +1,19 @@
+# Device Configuration
+laptop:
+  gpu: "RTX 4050"
+  vram_gb: 6
+  max_temperature: 80
+  default_batch_size: 8
+  use_amp: true
+
+jetson:
+  model: "Xavier"  # Nano, Xavier, Orin
+  use_tensorrt: true
+  precision: "fp16"
+  max_batch_size: 4
+
+safety:
+  require_permission_for_cpu: true
+  auto_throttle_on_overheat: true
+  checkpoint_on_thermal_pause: true
+  max_continuous_hours: 4

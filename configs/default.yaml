@@ -1,0 +1,222 @@
+# ==============================================================================
+# BlueDepth-Crescent - Default Configuration
+# Maritime Security and Reconnaissance System
+# ==============================================================================
+
+project:
+  name: "BlueDepth-Crescent"
+  version: "1.0.0"
+  description: "Underwater Image Enhancement for Maritime Security"
+
+# ==============================================================================
+# DATA CONFIGURATION (Aligned with organize_data.py)
+# ==============================================================================
+data:
+  # Main data directory
+  root: "data"
+  
+  # Training data (1280 pairs after organize_data.py)
+  train:
+    hazy: "data/train/hazy"
+    clear: "data/train/clear"
+  
+  # Testing data (320 pairs after organize_data.py)
+  test:
+    hazy: "data/test/hazy"
+    clear: "data/test/clear"
+  
+  # Processing directories
+  enhanced: "data/enhanced"
+  processed: "data/processed"
+  raw: "data/raw"
+  
+  # Video data
+  videos: "data/videos"
+  frames: "data/frames"
+  
+  # Image settings
+  image:
+    size: 256  # Training image size
+    formats: ['jpg', 'jpeg', 'png']
+    quality: 95  # Output JPEG quality
+
+# ==============================================================================
+# MODEL CONFIGURATION
+# ==============================================================================
+model:
+  # Architecture: 'unet_standard', 'unet_light', 'unet_attention'
+  type: "unet_attention"
+  
+  # Model parameters
+  input_channels: 3
+  output_channels: 3
+  base_filters: 64
+  bilinear: true
+  
+  # Attention settings (for unet_attention)
+  attention:
+    enabled: true
+    reduction_ratio: 8
+
+# ==============================================================================
+# TRAINING CONFIGURATION
+# ==============================================================================
+training:
+  # Basic settings
+  num_epochs: 100
+  batch_size: 4
+  learning_rate: 0.0001
+  img_size: 256
+  
+  # Data loading
+  num_workers: 4
+  pin_memory: true
+  shuffle: true
+  
+  # Augmentation
+  augmentation:
+    enabled: true
+    horizontal_flip: 0.5
+    vertical_flip: 0.3
+    rotation_degrees: 15
+    color_jitter:
+      brightness: 0.2
+      contrast: 0.2
+      saturation: 0.2
+  
+  # Optimizer
+  optimizer:
+    type: "adamw"
+    weight_decay: 0.0001
+    betas: [0.9, 0.999]
+    eps: 1e-8
+  
+  # Learning rate scheduler
+  scheduler:
+    type: "plateau"  # 'plateau', 'cosine', 'step'
+    patience: 5
+    factor: 0.5
+    min_lr: 1e-7
+  
+  # Loss configuration
+  loss:
+    type: "combined"  # 'l1', 'mse', 'ssim', 'perceptual', 'combined'
+    weights:
+      l1: 1.0
+      ssim: 0.5
+      perceptual: 0.1
+  
+  # Mixed precision training
+  mixed_precision:
+    enabled: true
+    opt_level: "O1"
+  
+  # Gradient clipping
+  gradient_clip: 1.0
+  
+  # Validation
+  validation:
+    enabled: true
+    frequency: 1  # Validate every N epochs
+    save_best: true
+  
+  # Checkpointing
+  checkpoint:
+    save_frequency: 10  # Save every N epochs
+    keep_last: 3  # Keep last N checkpoints
+    save_best: true
+
+# ==============================================================================
+# DEVICE CONFIGURATION
+# ==============================================================================
+device:
+  # Device selection: 'cuda', 'cpu', 'auto'
+  type: "auto"
+  
+  # GPU settings
+  gpu:
+    device_id: 0
+    use_amp: true  # Automatic Mixed Precision
+    max_temperature: 85.0  # °C
+    check_interval: 30  # seconds
+  
+  # Memory management
+  memory:
+    clear_cache_frequency: 50  # batches
+    max_memory_usage: 0.9  # 90% of available
+  
+  # Safety settings
+  safety:
+    thermal_throttle: true
+    checkpoint_on_overheat: true
+    auto_pause_temperature: 85.0
+    resume_temperature: 75.0
+
+# ==============================================================================
+# INFERENCE CONFIGURATION
+# ==============================================================================
+inference:
+  # Model loading
+  checkpoint: "checkpoints/unet_attention_best.pth"
+  
+  # Processing settings
+  batch_size: 1
+  device: "cuda"
+  
+  # Output settings
+  output:
+    directory: "data/enhanced"
+    save_comparisons: true
+    comparison_dir: "data/enhanced/comparisons"
+    quality: 95
+  
+  # Video processing
+  video:
+    fps: 5  # Frames to extract per second
+    output_fps: 30  # Output video FPS
+    codec: "mp4v"
+    frame_format: "jpg"
+
+# ==============================================================================
+# LOGGING CONFIGURATION
+# ==============================================================================
+logging:
+  # Log directories
+  log_dir: "logs"
+  tensorboard_dir: "runs"
+  
+  # Log levels: 'debug', 'info', 'warning', 'error'
+  level: "info"
+  
+  # Console output
+  console:
+    enabled: true
+    colored: true
+  
+  # File output
+  file:
+    enabled: true
+    max_size_mb: 100
+    backup_count: 5
+  
+  # TensorBoard
+  tensorboard:
+    enabled: true
+    log_frequency: 10  # batches
+
+# ==============================================================================
+# OUTPUT PATHS
+# ==============================================================================
+paths:
+  checkpoints: "checkpoints"
+  logs: "logs"
+  results: "results"
+  tensorboard: "runs"
+
+# ==============================================================================
+# EXPERIMENT TRACKING
+# ==============================================================================
+experiment:
+  name: "default_experiment"
+  tags: ["underwater", "enhancement", "unet"]
+  notes: "Default configuration for BlueDepth-Crescent"

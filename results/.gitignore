@@ -1,0 +1,19 @@
+# Ignore large result files
+**/*.jpg
+**/*.png
+**/*.mp4
+**/*.avi
+**/*.gif
+
+# But keep structure and docs
+!README.md
+!.gitkeep
+!**/.gitkeep
+!**/README.md
+
+# Keep benchmark CSVs
+!benchmarks/*.csv
+!benchmarks/*.xlsx
+
+# Keep one example image
+!enhanced_samples/enhanced_im_f1000.jpg

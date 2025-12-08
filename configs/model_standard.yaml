@@ -1,0 +1,31 @@
+# ==============================================================================
+# BlueDepth-Crescent - UNet Standard Model Configuration
+# Balanced performance and accuracy
+# ==============================================================================
+
+_base_: "default.yaml"
+
+project:
+  name: "BlueDepth-UNetStandard"
+
+model:
+  type: "unet_standard"
+  input_channels: 3
+  output_channels: 3
+  base_filters: 64
+  bilinear: true
+
+training:
+  batch_size: 4
+  img_size: 256
+  
+  loss:
+    type: "combined"
+    weights:
+      l1: 1.0
+      ssim: 0.5
+
+experiment:
+  name: "unet_standard_experiment"
+  tags: ["unet_standard", "balanced", "production"]
+  notes: "Standard UNet for balanced speed and quality - 7.8M parameters"

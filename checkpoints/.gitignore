@@ -1,0 +1,9 @@
+# Ignore all checkpoint files
+*
+
+# But keep these files
+!.gitignore
+!.gitkeep
+!README.md
+!DOWNLOAD_MODELS.md
+!checksums.txt

@@ -1,0 +1,547 @@
+# ============================================================================
+# BlueDepth-Crescent .gitignore
+# ============================================================================
+# Project: Underwater Vision Intelligence System
+# Version: 1.0.0
+# Purpose: Exclude unnecessary files from version control
+# ============================================================================
+
+
+# ============================================================================
+# PYTHON
+# ============================================================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# pdm
+.pdm.toml
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+
+# ============================================================================
+# PYTORCH & DEEP LEARNING
+# ============================================================================
+# Model weights and checkpoints (LARGE FILES - NEVER COMMIT)
+*.pth
+*.pt
+*.ckpt
+*.pkl
+*.h5
+*.hdf5
+
+# ONNX models
+*.onnx
+*.pb
+
+# TensorRT engines
+*.trt
+*.engine
+*.plan
+
+# TorchScript
+*.pt.zip
+
+# Model metadata
+*.meta
+*.index
+
+# TensorBoard logs
+runs/
+events.out.tfevents.*
+
+# Training logs
+logs/
+*.log
+*.out
+
+# Wandb (Weights & Biases)
+wandb/
+
+# MLflow
+mlruns/
+mlartifacts/
+
+
+# ============================================================================
+# DATASETS (NEVER COMMIT - TOO LARGE)
+# ============================================================================
+# Data directories
+data/**
+!data/README.md
+!data/.gitkeep
+!data/sample_images/
+
+dataset/
+datasets/
+raw_data/
+processed_data/
+
+# Specific dataset formats
+*.tfrecord
+*.npy
+*.npz
+*.csv
+*.tsv
+*.json
+!configs/**/*.json  # Keep config JSONs
+
+# Image/Video files (except samples)
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.tif
+*.webp
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.flv
+*.wmv
+
+# Keep sample images
+!results/enhanced_samples/enhanced_im_f1000.jpg
+!ui/assets/logo.png
+!ui/assets/*.png
+!docs/**/*.png
+!docs/**/*.jpg
+
+
+# ============================================================================
+# CHECKPOINTS & MODEL OUTPUTS
+# ============================================================================
+checkpoints/**
+!checkpoints/README.md
+!checkpoints/.gitkeep
+!checkpoints/DOWNLOAD_MODELS.md
+!checkpoints/.gitignore
+
+# Results
+results/**/*.jpg
+results/**/*.png
+results/**/*.mp4
+results/**/*.avi
+results/**/*.gif
+
+# Keep structure and docs
+!results/README.md
+!results/.gitkeep
+!results/**/.gitkeep
+!results/**/README.md
+!results/benchmarks/*.csv
+
+
+# ============================================================================
+# LOGS & TEMPORARY FILES
+# ============================================================================
+# Training logs
+logs/**
+!logs/README.md
+!logs/.gitkeep
+!logs/.gitignore
+
+# System logs
+*.log
+*.log.*
+*.out
+*.err
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+.cache/
+*.cache
+
+# Lock files
+*.lock
+
+
+# ============================================================================
+# IDE & EDITORS
+# ============================================================================
+# Visual Studio Code
+.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# PyCharm
+.idea/
+.idea/*
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+
+# Spyder
+.spyderproject
+.spyproject
+
+# Atom
+.atom/
+
+
+# ============================================================================
+# OPERATING SYSTEMS
+# ============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+.directory
+.Trash-*
+.nfs*
+
+
+# ============================================================================
+# TESTING
+# ============================================================================
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+*.cover
+.hypothesis/
+.pytype/
+
+# Test outputs
+test_output/
+test_results/
+tests/__pycache__/
+tests/*.pyc
+
+
+# ============================================================================
+# DOCUMENTATION
+# ============================================================================
+# Build directories
+docs/_build/
+docs/_static/
+docs/_templates/
+site/
+
+# Auto-generated docs
+docs/api/
+
+
+# ============================================================================
+# DEPLOYMENT
+# ============================================================================
+# Docker
+.dockerignore
+*.tar
+*.tar.gz
+
+# Kubernetes
+*.yaml.bak
+
+# Secrets
+secrets/
+*.pem
+*.key
+*.cert
+*.crt
+id_rsa
+id_rsa.pub
+
+# Environment files
+.env
+.env.*
+.envrc
+!.env.example
+
+
+# ============================================================================
+# COMPRESSED FILES
+# ============================================================================
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.bz2
+*.gz
+*.xz
+
+
+# ============================================================================
+# DATABASES
+# ============================================================================
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+
+
+# ============================================================================
+# PROFILING & MONITORING
+# ============================================================================
+*.prof
+*.lprof
+*.pyprof
+.profiling/
+
+
+# ============================================================================
+# GRADIO & STREAMLIT
+# ============================================================================
+# Gradio cache
+gradio_cached_examples/
+flagged/
+
+# Streamlit
+.streamlit/
+!.streamlit/config.toml
+
+
+# ============================================================================
+# EDGE DEPLOYMENT
+# ============================================================================
+# TensorRT
+*.trt
+*.engine
+*.plan
+
+# Jetson
+*.nvr
+*.nvp
+
+
+# ============================================================================
+# PROJECT-SPECIFIC
+# ============================================================================
+# Old/backup files
+old/
+backup/
+archive/
+deprecated/
+
+# Experiments
+experiments/
+sandbox/
+scratch/
+
+# Notes
+notes.txt
+TODO.txt
+NOTES.md
+
+# Local configuration
+local_config.yaml
+local_settings.py
+
+# Download cache
+downloads/
+.cache/
+
+
+# ============================================================================
+# KEEP IMPORTANT FILES (Override above rules)
+# ============================================================================
+# Always keep these
+!.gitignore
+!.gitkeep
+!README.md
+!LICENSE
+!requirements.txt
+!setup.py
+!main.py
+!*.py
+
+
+# ============================================================================
+# END OF .gitignore
+# ============================================================================

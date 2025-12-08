@@ -1,0 +1,39 @@
+# Training Configuration
+model:
+  type: "standard"  # standard, light, attention
+  input_channels: 3
+  output_channels: 3
+  bilinear: true
+
+training:
+  batch_size: 8
+  num_epochs: 100
+  learning_rate: 0.0001
+  img_size: 256
+  num_workers: 2
+  
+  # Optimizer
+  optimizer: "adamw"
+  weight_decay: 0.01
+  
+  # Scheduler
+  scheduler: "plateau"
+  patience: 5
+  factor: 0.5
+
+loss:
+  type: "combined"  # ssim, l1, combined, perceptual
+  ssim_weight: 0.7
+  l1_weight: 0.3
+
+gpu:
+  use_amp: true
+  max_temperature: 80.0
+  check_interval: 30
+  safe_batch_size_multiplier: 1.0
+
+paths:
+  data_dir: "data"
+  checkpoint_dir: "checkpoints"
+  log_dir: "logs"
+  results_dir: "results"

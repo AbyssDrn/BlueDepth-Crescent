@@ -1,0 +1,71 @@
+# ==============================================================================
+# BlueDepth-Crescent - Inference Configuration
+# Settings for production deployment and testing
+# ==============================================================================
+
+project:
+  name: "BlueDepth-Inference"
+
+# ==============================================================================
+# MODEL LOADING
+# ==============================================================================
+model:
+  # Path to trained checkpoint
+  checkpoint: "checkpoints/unet_attention_best.pth"
+  type: "unet_attention"
+  
+  # Device
+  device: "cuda"  # or 'cpu' for CPU-only inference
+
+# ==============================================================================
+# INPUT/OUTPUT SETTINGS
+# ==============================================================================
+inference:
+  # Input paths
+  input:
+    single_image: null
+    batch_dir: "data/test/hazy"
+    video: null
+  
+  # Output paths
+  output:
+    directory: "data/enhanced"
+    save_comparisons: true
+    comparison_dir: "data/enhanced/comparisons"
+    quality: 95
+  
+  # Processing settings
+  batch_size: 1
+  img_size: 256
+  
+  # Video processing
+  video:
+    extract_fps: 5
+    output_fps: 30
+    codec: "mp4v"
+    frame_format: "jpg"
+  
+  # Quality metrics
+  metrics:
+    calculate: true
+    ground_truth_dir: "data/test/clear"
+    save_metrics: true
+    metrics_file: "results/metrics.json"
+
+# ==============================================================================
+# DEVICE SETTINGS
+# ==============================================================================
+device:
+  type: "auto"  # Auto-detect
+  
+  gpu:
+    device_id: 0
+    use_amp: true
+
+# ==============================================================================
+# LOGGING
+# ==============================================================================
+logging:
+  level: "info"
+  save_log: true
+  log_file: "logs/inference.log"

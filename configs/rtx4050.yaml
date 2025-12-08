@@ -1,0 +1,143 @@
+# ==============================================================================
+# BlueDepth-Crescent - RTX 4050 Configuration
+# Optimized for NVIDIA RTX 4050 (6GB VRAM)
+# ==============================================================================
+
+# Inherit from default config
+_base_: "default.yaml"
+
+project:
+  name: "BlueDepth-Crescent-RTX4050"
+  device: "rtx_4050"
+
+# ==============================================================================
+# BEST MODEL FOR RTX 4050
+# ==============================================================================
+model:
+  type: "unet_attention"  # Full attention model
+  base_filters: 64
+  bilinear: true
+  
+  attention:
+    enabled: true
+    reduction_ratio: 8
+
+# ==============================================================================
+# TRAINING SETTINGS FOR RTX 4050
+# ==============================================================================
+training:
+  # Optimized for 6GB VRAM
+  num_epochs: 100
+  batch_size: 4  # Max stable batch size for 6GB
+  learning_rate: 0.0001
+  img_size: 256
+  
+  # Multi-threading
+  num_workers: 4
+  pin_memory: true
+  
+  # Full augmentation
+  augmentation:
+    enabled: true
+    horizontal_flip: 0.5
+    vertical_flip: 0.3
+    rotation_degrees: 15
+    color_jitter:
+      brightness: 0.2
+      contrast: 0.2
+      saturation: 0.2
+  
+  # AdamW optimizer
+  optimizer:
+    type: "adamw"
+    weight_decay: 0.0001
+    betas: [0.9, 0.999]
+  
+  # Combined loss for best results
+  loss:
+    type: "combined"
+    weights:
+      l1: 1.0
+      ssim: 0.5
+      perceptual: 0.1
+  
+  # Mixed precision (RTX supports it well)
+  mixed_precision:
+    enabled: true
+    opt_level: "O1"
+  
+  # Checkpointing
+  checkpoint:
+    save_frequency: 10
+    keep_last: 5
+    save_best: true
+
+# ==============================================================================
+# RTX 4050 DEVICE SETTINGS
+# ==============================================================================
+device:
+  type: "cuda"
+  
+  gpu:
+    device_id: 0
+    use_amp: true  # Automatic Mixed Precision
+    max_temperature: 80.0
+    check_interval: 30
+  
+  memory:
+    clear_cache_frequency: 50
+    max_memory_usage: 0.9  # Use 90% of VRAM
+  
+  safety:
+    thermal_throttle: true
+    checkpoint_on_overheat: true
+    auto_pause_temperature: 82.0
+    resume_temperature: 75.0
+
+# ==============================================================================
+# RTX-SPECIFIC OPTIMIZATIONS
+# ==============================================================================
+rtx:
+  # CUDA optimizations
+  cuda:
+    benchmark: true  # cuDNN benchmark mode
+    deterministic: false  # Faster but non-deterministic
+  
+  # Memory optimizations
+  memory:
+    empty_cache_freq: 50
+    gradient_checkpointing: false  # Not needed with 6GB
+
+# ==============================================================================
+# INFERENCE SETTINGS FOR RTX 4050
+# ==============================================================================
+inference:
+  batch_size: 4  # Process multiple images at once
+  device: "cuda"
+  
+  output:
+    quality: 95  # High quality output
+    save_comparisons: true
+  
+  video:
+    fps: 10  # Higher extraction rate
+    output_fps: 30
+
+# ==============================================================================
+# LOGGING (Full monitoring)
+# ==============================================================================
+logging:
+  level: "info"
+  
+  console:
+    enabled: true
+    colored: true
+  
+  tensorboard:
+    enabled: true
+    log_frequency: 10
+
+experiment:
+  name: "rtx4050_experiment"
+  tags: ["rtx4050", "attention_unet", "full_training"]
+  notes: "Optimized for RTX 4050 6GB - Full training with attention mechanism"

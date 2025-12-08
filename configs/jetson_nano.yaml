@@ -1,0 +1,130 @@
+# ==============================================================================
+# BlueDepth-Crescent - Jetson Nano Configuration
+# Optimized for NVIDIA Jetson Nano (4GB RAM, 128 CUDA cores)
+# ==============================================================================
+
+# Inherit from default config
+_base_: "default.yaml"
+
+project:
+  name: "BlueDepth-Crescent-JetsonNano"
+  device: "jetson_nano"
+
+# ==============================================================================
+# LIGHTWEIGHT MODEL FOR JETSON NANO
+# ==============================================================================
+model:
+  type: "unet_light"  # Use lightweight model
+  base_filters: 32  # Reduced filters
+  bilinear: true
+
+# ==============================================================================
+# TRAINING SETTINGS FOR JETSON NANO
+# ==============================================================================
+training:
+  # Minimal settings for 4GB RAM
+  num_epochs: 150
+  batch_size: 1  # CRITICAL: Max batch size for 4GB
+  learning_rate: 0.0001
+  img_size: 128  # Smaller images for faster processing
+  
+  # Reduced workers
+  num_workers: 2
+  pin_memory: false  # Save memory
+  
+  # Augmentation (lighter)
+  augmentation:
+    enabled: true
+    horizontal_flip: 0.5
+    vertical_flip: 0.3
+    rotation_degrees: 10
+    color_jitter:
+      brightness: 0.1
+      contrast: 0.1
+      saturation: 0.1
+  
+  # Optimizer
+  optimizer:
+    type: "adam"  # Lighter than AdamW
+    weight_decay: 0.0001
+  
+  # Simpler loss
+  loss:
+    type: "l1"  # Fastest loss function
+    weights:
+      l1: 1.0
+  
+  # NO mixed precision (Jetson Nano doesn't benefit much)
+  mixed_precision:
+    enabled: false
+  
+  # Frequent checkpointing (safety)
+  checkpoint:
+    save_frequency: 5
+    keep_last: 2
+
+# ==============================================================================
+# JETSON NANO DEVICE SETTINGS
+# ==============================================================================
+device:
+  type: "cuda"  # Jetson has CUDA
+  
+  gpu:
+    device_id: 0
+    use_amp: false  # Not beneficial on Jetson Nano
+    max_temperature: 70.0  # Lower threshold for Jetson
+    check_interval: 20
+  
+  memory:
+    clear_cache_frequency: 10  # Clear cache often
+    max_memory_usage: 0.75  # Conservative memory usage
+  
+  # Aggressive safety for Jetson Nano
+  safety:
+    thermal_throttle: true
+    checkpoint_on_overheat: true
+    auto_pause_temperature: 70.0
+    resume_temperature: 60.0
+    max_continuous_hours: 2  # Shorter sessions
+
+# ==============================================================================
+# JETSON-SPECIFIC OPTIMIZATIONS
+# ==============================================================================
+jetson:
+  # TensorRT optimization (for inference)
+  tensorrt:
+    enabled: true
+    precision: "fp16"
+    workspace_size_mb: 512
+  
+  # Power mode
+  power_mode: "15W"  # Max mode for Jetson Nano
+  
+  # CPU fallback
+  cpu_fallback:
+    enabled: true
+    on_memory_error: true
+
+# ==============================================================================
+# INFERENCE SETTINGS FOR JETSON NANO
+# ==============================================================================
+inference:
+  batch_size: 1  # Single image processing
+  device: "cuda"
+  
+  output:
+    quality: 85  # Lower quality to save storage
+
+# ==============================================================================
+# LOGGING (Reduced verbosity)
+# ==============================================================================
+logging:
+  level: "warning"  # Less logging to save resources
+  
+  tensorboard:
+    enabled: false  # Disable TensorBoard on Jetson
+
+experiment:
+  name: "jetson_nano_experiment"
+  tags: ["jetson_nano", "edge_device", "lightweight"]
+  notes: "Optimized for Jetson Nano 4GB - Use unet_light model"

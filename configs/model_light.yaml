@@ -1,0 +1,28 @@
+# ==============================================================================
+# BlueDepth-Crescent - UNet Light Model Configuration
+# Fastest model with minimal parameters
+# ==============================================================================
+
+_base_: "default.yaml"
+
+project:
+  name: "BlueDepth-UNetLight"
+
+model:
+  type: "unet_light"
+  input_channels: 3
+  output_channels: 3
+  base_filters: 32  # Minimal filters
+  bilinear: true
+
+training:
+  batch_size: 8  # Can use larger batches
+  img_size: 128  # Smaller for speed
+  
+  loss:
+    type: "l1"  # Simple loss for speed
+
+experiment:
+  name: "unet_light_experiment"
+  tags: ["unet_light", "fast", "lightweight"]
+  notes: "Lightweight model for fast inference - 350K parameters"

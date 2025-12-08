@@ -1,0 +1,30 @@
+# ==============================================================================
+# BlueDepth-Crescent - Quick Test Configuration
+# Minimal settings for rapid testing
+# ==============================================================================
+
+_base_: "default.yaml"
+
+project:
+  name: "BlueDepth-QuickTest"
+
+model:
+  type: "unet_light"
+
+training:
+  num_epochs: 5  # Just 5 epochs
+  batch_size: 2
+  img_size: 128
+  
+  checkpoint:
+    save_frequency: 1
+
+logging:
+  level: "debug"
+  tensorboard:
+    enabled: false
+
+experiment:
+  name: "quick_test"
+  tags: ["test", "debug"]
+  notes: "Quick test configuration for debugging"
