@@ -36,12 +36,12 @@ def organize_frames(
             print(f"   {video_folder.name}: {len(frames)} frames")
     
     if not all_frames:
-        print(f"\n❌ No frames found in {frames_dir}")
-        print("\n💡 Extract frames first:")
+        print(f"\n No frames found in {frames_dir}")
+        print("\n Extract frames first:")
         print("   python scripts/extract_video_frames.py")
         return
     
-    print(f"\n✅ Total: {len(all_frames)} frames")
+    print(f"\n Total: {len(all_frames)} frames")
     
     # Shuffle
     random.seed(42)
@@ -83,16 +83,16 @@ def organize_frames(
         shutil.copy2(frame, test_dir / f"test_{idx:05d}{frame.suffix}")
     
     print("\n" + "="*70)
-    print("✅ Organization Complete!")
+    print(" Organization Complete!")
     print("="*70)
     
-    print(f"\n📂 Structure:")
+    print(f"\n Structure:")
     print(f"   {output_dir}/")
-    print(f"   ├── train/hazy/ ({len(train_frames)} frames)")
-    print(f"   ├── val/hazy/   ({len(val_frames)} frames)")
-    print(f"   └── test/hazy/  ({len(test_frames)} frames)")
+    print(f"    train/hazy/ ({len(train_frames)} frames)")
+    print(f"    val/hazy/   ({len(val_frames)} frames)")
+    print(f"    test/hazy/  ({len(test_frames)} frames)")
     
-    print(f"\n🚀 Start training:")
+    print(f"\n Start training:")
     print(f"   python main.py train --model standard --epochs 100")
 
 

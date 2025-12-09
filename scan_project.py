@@ -229,7 +229,7 @@ def print_tree(tree, path, prefix="", is_last=True, max_files_shown=10):
         # Show directories first
         for i, (name, subtree) in enumerate(directories):
             is_last_item = (i == len(directories) - 1) and len(media_folders) == 0 and len(files) == 0
-            connector = "└── " if is_last_item else "├── "
+            connector = " " if is_last_item else " "
 
             # Check if it's a Python package
             has_init = '__init__.py' in subtree
@@ -241,13 +241,13 @@ def print_tree(tree, path, prefix="", is_last=True, max_files_shown=10):
 
             print(f"{prefix}{connector}{name}/{marker}{py_info}")
 
-            extension = "    " if is_last_item else "│   "
+            extension = "    " if is_last_item else "   "
             print_tree(subtree, f"{path}/{name}", prefix + extension, is_last_item, max_files_shown)
 
         # Show media folders with summary
         for i, (name, subtree) in enumerate(media_folders):
             is_last_item = (i == len(media_folders) - 1) and len(files) == 0
-            connector = "└── " if is_last_item else "├── "
+            connector = " " if is_last_item else " "
 
             media_info = subtree.get('[MEDIA_FOLDER]', 'media files')
             print(f"{prefix}{connector}{name}/ [MEDIA: {media_info}]")
@@ -259,16 +259,16 @@ def print_tree(tree, path, prefix="", is_last=True, max_files_shown=10):
 
         for i, name in enumerate(important_files[:max_files_shown]):
             is_last_file = (i == len(important_files) - 1) and len(other_files) == 0
-            connector = "└── " if is_last_file else "├── "
+            connector = " " if is_last_file else " "
             print(f"{prefix}{connector}{name}")
 
         if len(important_files) > max_files_shown:
             remaining = len(important_files) - max_files_shown
-            connector = "└── " if len(other_files) == 0 else "├── "
+            connector = " " if len(other_files) == 0 else " "
             print(f"{prefix}{connector}[{remaining} more important files...]")
 
         if len(other_files) > 0:
-            print(f"{prefix}└── [{len(other_files)} other files]")
+            print(f"{prefix} [{len(other_files)} other files]")
 
 if __name__ == "__main__":
     import argparse

@@ -135,9 +135,9 @@ def extract_frames_from_videos(
         print(f"   Extracted: {saved_count} frames")
         try:
             rel_path = video_output_dir.relative_to(Path.cwd())
-            print(f"  📁 Saved to: {rel_path}")
+            print(f"   Saved to: {rel_path}")
         except ValueError:
-             print(f"  📁 Saved to: {video_output_dir}")
+             print(f"   Saved to: {video_output_dir}")
         total_frames_extracted += saved_count
     
     # Summary

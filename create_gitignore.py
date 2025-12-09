@@ -122,10 +122,10 @@ htmlcov/
 with open('.gitignore', 'w') as f:
     f.write(gitignore_content.strip())
 
-print("✓ Created .gitignore")
+print(" Created .gitignore")
 print("\nThis will prevent uploading:")
 print("  - Virtual environment (venv/)")
 print("  - Model checkpoints (*.pth)")
 print("  - Training data (images, videos)")
 print("  - Results and logs")
-print("\n✓ Safe to commit to Git now!")
+print("\n Safe to commit to Git now!")
